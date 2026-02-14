@@ -1,4 +1,4 @@
-
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
@@ -42,7 +42,6 @@
     .heart, .floatingHeart, .confetti {
       position: absolute;
       font-size: 24px;
-      color: red;
       z-index: 5;
     }
 
@@ -62,13 +61,30 @@
 
     .confetti {
       font-size: 18px;
-      color: hsl(var(--hue), 100%, 50%);
       animation: confettiFly 1s linear forwards;
     }
 
     @keyframes confettiFly {
       0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
       100% { transform: translate(var(--x), var(--y)) rotate(360deg); opacity: 0; }
+    }
+
+    #sadCupid, #arrow {
+      position: fixed;
+      font-size: 5em;
+      display: none;
+      z-index: 20;
+    }
+
+    @keyframes sadWalk {
+      0% { left: 50%; opacity: 1; }
+      100% { left: 110%; opacity: 1; }
+    }
+
+    @keyframes shootArrow {
+      0% { top: 100%; opacity: 0; }
+      50% { top: 50%; opacity: 1; }
+      100% { top: 0%; opacity: 0; }
     }
   </style>
 </head>
@@ -79,12 +95,18 @@
   <button id="yesBtn">Yes</button>
   <button id="noBtn">No</button>
 
+  <div id="sadCupid">😢💘</div>
+  <div id="arrow">🏹</div>
+
   <script>
     const yesBtn = document.getElementById('yesBtn');
     const noBtn = document.getElementById('noBtn');
     const h1 = document.querySelector('h1');
+    const sadCupid = document.getElementById('sadCupid');
+    const arrow = document.getElementById('arrow');
+    let noAttempts = 0;
 
-    // Floating hearts background
+    // Floating hearts in the background
     function spawnFloatingHeart() {
       const heart = document.createElement('div');
       heart.className = 'floatingHeart';
@@ -97,8 +119,98 @@
     }
     setInterval(spawnFloatingHeart, 500);
 
-    // YES button click: hearts, confetti, then text
+    // YES button click
     yesBtn.addEventListener('click', () => {
-      // Explode hearts and confetti
       for (let i = 0; i < 30; i++) {
         const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.textContent = '❤️';
+        heart.style.left = yesBtn.offsetLeft + yesBtn.offsetWidth/2 + 'px';
+        heart.style.top = yesBtn.offsetTop + yesBtn.offsetHeight/2 + 'px';
+        const x = (Math.random() - 0.5) * 400 + 'px';
+        const y = (Math.random() - 0.5) * 400 + 'px';
+        heart.style.setProperty('--x', x);
+        heart.style.setProperty('--y', y);
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 1000);
+
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        confetti.textContent = '✨';
+        confetti.style.left = yesBtn.offsetLeft + yesBtn.offsetWidth/2 + 'px';
+        confetti.style.top = yesBtn.offsetTop + yesBtn.offsetHeight/2 + 'px';
+        confetti.style.setProperty('--x', (Math.random() - 0.5) * 500 + 'px');
+        confetti.style.setProperty('--y', (Math.random() - 0.5) * 500 + 'px');
+        confetti.style.setProperty('--hue', Math.random() * 360);
+        document.body.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 1000);
+      }
+
+      // Remove buttons
+      yesBtn.style.display = 'none';
+      noBtn.style.display = 'none';
+
+      // Animate headline to center and grow
+      h1.textContent = "So you kinda like me huh…";
+      h1.style.fontSize = '6em';
+      h1.style.position = 'fixed';
+      h1.style.top = '50%';
+      h1.style.left = '50%';
+      h1.style.transform = 'translate(-50%, -50%)';
+      h1.style.zIndex = '20';
+
+      // Add "sucker!" after 1 second
+      setTimeout(() => {
+        h1.textContent += " sucker! 💕";
+      }, 1000);
+    });
+
+    // NO button hover
+    noBtn.addEventListener('mousemove', () => {
+      noAttempts++;
+      if (noAttempts < 3) {
+        const x = Math.random() * (window.innerWidth - noBtn.offsetWidth);
+        const y = Math.random() * (window.innerHeight - noBtn.offsetHeight);
+        noBtn.style.position = 'absolute';
+        noBtn.style.left = x + 'px';
+        noBtn.style.top = y + 'px';
+      } else {
+        // 3rd attempt: sad cupid + arrow + reset
+        document.body.style.backgroundColor = 'black';
+        yesBtn.style.display = 'none';
+        noBtn.style.display = 'none';
+        h1.style.color = 'white';
+
+        sadCupid.style.display = 'block';
+        sadCupid.style.left = '50%';
+        sadCupid.style.top = '50%';
+        sadCupid.style.animation = 'sadWalk 3s forwards';
+
+        setTimeout(() => {
+          arrow.style.display = 'block';
+          arrow.style.left = '50%';
+          arrow.style.top = '100%';
+          arrow.style.animation = 'shootArrow 1s forwards';
+        }, 3000);
+
+        setTimeout(() => {
+          arrow.style.display = 'none';
+          sadCupid.style.display = 'none';
+          yesBtn.style.display = 'inline-block';
+          noBtn.style.display = 'inline-block';
+          h1.style.color = '#e60073';
+          h1.textContent = "Will You Be My Valentine? 💕";
+          h1.style.fontSize = '3em';
+          h1.style.position = 'relative';
+          h1.style.top = '';
+          h1.style.left = '';
+          h1.style.transform = '';
+          document.body.style.backgroundColor = '#ffe6f0';
+          noAttempts = 0;
+        }, 4500);
+      }
+    });
+  </script>
+
+</body>
+</html>
