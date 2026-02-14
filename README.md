@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Be My Valentine? 💕</title>
+  <title>Valentine Card</title> <!-- only in browser tab, won't appear on page -->
   <style>
     body {
       background-color: #ffe6f0;
@@ -41,17 +41,11 @@
 
     .heart, .floatingHeart, .confetti {
       position: absolute;
-      font-size: 24px;
       z-index: 5;
     }
 
     .floatingHeart {
       animation: floatDown linear infinite;
-    }
-
-    @keyframes fly {
-      0% { transform: translate(0, 0) scale(1); opacity: 1; }
-      100% { transform: translate(var(--x), var(--y)) scale(2); opacity: 0; }
     }
 
     @keyframes floatDown {
@@ -75,22 +69,11 @@
       display: none;
       z-index: 20;
     }
-
-    @keyframes sadWalk {
-      0% { left: 50%; opacity: 1; }
-      100% { left: 110%; opacity: 1; }
-    }
-
-    @keyframes shootArrow {
-      0% { top: 100%; opacity: 0; }
-      50% { top: 50%; opacity: 1; }
-      100% { top: 0%; opacity: 0; }
-    }
   </style>
 </head>
 <body>
 
-  <h1>Will You Be My Valentine? 💕</h1>
+  <h1 id="headline">Hey Rob, will you be my Valentine? 💕</h1>
 
   <button id="yesBtn">Yes</button>
   <button id="noBtn">No</button>
@@ -101,12 +84,12 @@
   <script>
     const yesBtn = document.getElementById('yesBtn');
     const noBtn = document.getElementById('noBtn');
-    const h1 = document.querySelector('h1');
+    const h1 = document.getElementById('headline');
     const sadCupid = document.getElementById('sadCupid');
     const arrow = document.getElementById('arrow');
     let noAttempts = 0;
 
-    // Floating hearts in the background
+    // Floating hearts background
     function spawnFloatingHeart() {
       const heart = document.createElement('div');
       heart.className = 'floatingHeart';
@@ -121,6 +104,10 @@
 
     // YES button click
     yesBtn.addEventListener('click', () => {
+      // hide headline while animation runs
+      h1.style.display = 'none';
+
+      // Explode hearts + confetti
       for (let i = 0; i < 30; i++) {
         const heart = document.createElement('div');
         heart.className = 'heart';
@@ -146,22 +133,20 @@
         setTimeout(() => confetti.remove(), 1000);
       }
 
-      // Remove buttons
+      // hide buttons
       yesBtn.style.display = 'none';
       noBtn.style.display = 'none';
 
-      // Animate headline to center and grow
-      h1.textContent = "So you kinda like me huh…";
-      h1.style.fontSize = '6em';
-      h1.style.position = 'fixed';
-      h1.style.top = '50%';
-      h1.style.left = '50%';
-      h1.style.transform = 'translate(-50%, -50%)';
-      h1.style.zIndex = '20';
-
-      // Add "sucker!" after 1 second
+      // after animation, show the centered text
       setTimeout(() => {
-        h1.textContent += " sucker! 💕";
+        h1.style.display = 'block';
+        h1.textContent = "So you kinda like me huh… sucker! 💕";
+        h1.style.fontSize = '6em';
+        h1.style.position = 'fixed';
+        h1.style.top = '50%';
+        h1.style.left = '50%';
+        h1.style.transform = 'translate(-50%, -50%)';
+        h1.style.zIndex = '20';
       }, 1000);
     });
 
@@ -175,11 +160,11 @@
         noBtn.style.left = x + 'px';
         noBtn.style.top = y + 'px';
       } else {
-        // 3rd attempt: sad cupid + arrow + reset
+        // hide headline during animation
+        h1.style.display = 'none';
         document.body.style.backgroundColor = 'black';
         yesBtn.style.display = 'none';
         noBtn.style.display = 'none';
-        h1.style.color = 'white';
 
         sadCupid.style.display = 'block';
         sadCupid.style.left = '50%';
@@ -198,13 +183,14 @@
           sadCupid.style.display = 'none';
           yesBtn.style.display = 'inline-block';
           noBtn.style.display = 'inline-block';
+          h1.style.display = 'block';
           h1.style.color = '#e60073';
-          h1.textContent = "Will You Be My Valentine? 💕";
           h1.style.fontSize = '3em';
           h1.style.position = 'relative';
           h1.style.top = '';
           h1.style.left = '';
           h1.style.transform = '';
+          h1.textContent = "Hey Rob, will you be my Valentine? 💕";
           document.body.style.backgroundColor = '#ffe6f0';
           noAttempts = 0;
         }, 4500);
